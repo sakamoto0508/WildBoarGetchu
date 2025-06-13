@@ -40,10 +40,12 @@ public class EnemyMove : EnemyBase
     /// プレイヤーの10メートル先
     /// </summary>
     [SerializeField] private float _predictionDistance = 10f;
+    Collider _collider;
     // Start is called before the first frame update
     void Start()
     {
         _myAgent = GetComponent<NavMeshAgent>();
+        _collider = GetComponent<Collider>();
         _myAgent.speed = _wanderSpeed;
         SetNextWanderGoal();
     }
@@ -58,11 +60,23 @@ public class EnemyMove : EnemyBase
                 DetectCage();
                 SetNextWanderGoal();
                 break;
-
+            case EnemyState.ChaseCage:
+                if (_targetCage.gameObject.activeSelf == false)
+                {
+                    ReturnToWander();
+                }
+                break;
             case EnemyState.ChasePlayer:
                 HandleChaseStatePlayer();
                 break;
             case EnemyState.Getchued:
+                _collider.enabled = false;
+                if (_targetCage.gameObject.activeSelf == false)
+                {
+                    ReturnToWander();
+                    Debug.Log("ワンダーに戻る");
+                    
+                }
                 break;
 
         }
@@ -74,9 +88,9 @@ public class EnemyMove : EnemyBase
     void DetectPlayer()
     {
         //檻を見つけている場合無視
-        //if (_enemyContainer.enemyState == EnemyState.ChaseCage) return;
+        if (enemyState == EnemyState.ChaseCage) return;
         // 捕まってる状態なら無視
-        //if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        if (enemyState == EnemyState.Getchued) return;
 
         Vector3 toPlayer = _targetPlayer.position - transform.position;
         float distance = toPlayer.magnitude;
@@ -142,11 +156,11 @@ public class EnemyMove : EnemyBase
     {
 
         // 捕まってる状態なら無視
-        //if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        if (enemyState == EnemyState.Getchued) return;
 
         enemyState = EnemyState.ChasePlayer;
         _myAgent.speed = _chaseSpeed;
-        Invoke(nameof(SetChaseDestination),3f);
+        Invoke(nameof(SetChaseDestination), 3f);
         //SetChaseDestination();
 
         _trakingTime = Time.time;
@@ -165,10 +179,9 @@ public class EnemyMove : EnemyBase
         enemyState = EnemyState.ChaseCage;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(ChaseCage), 3f);
-        Invoke(nameof(SetChaseDestination), 3f);
-        //SetChaseDestination();
-        
 
+        //Invoke(nameof(SetChaseDestination), 3f);
+        //SetChaseDestination();
         _trakingTime = Time.time;
         Debug.Log("檻ををみつけたぜ！");
     }
@@ -199,7 +212,7 @@ public class EnemyMove : EnemyBase
         //何か怪しい
         if (canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
         {
-            Invoke(nameof(SetChaseDestination),3f);
+            Invoke(nameof(SetChaseDestination), 3f);
             //Debug.Log("発射1");
             //SetChaseDestination();
             _trakingTime += _trackingTimeLimit;
@@ -218,6 +231,7 @@ public class EnemyMove : EnemyBase
         enemyState = EnemyState.Wander;
         SetNextWanderGoal();
         _myAgent.speed = _wanderSpeed;
+        _collider.enabled = true;
     }
 
     /// <summary>
@@ -248,7 +262,7 @@ public class EnemyMove : EnemyBase
     void SetChaseDestination()
     {
         //Debug.Log("発射2");
-        Vector3 toPlayer = (_targetPlayer.position - transform.position).normalized;       
+        Vector3 toPlayer = (_targetPlayer.position - transform.position).normalized;
         Vector3 predictedPosition = _targetPlayer.position + toPlayer * _predictionDistance;
         // NavMesh経路取得用
         NavMeshPath path = new NavMeshPath();
