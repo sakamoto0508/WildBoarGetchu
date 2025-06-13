@@ -15,7 +15,6 @@ public class EnemyMove : EnemyBase
     /// 次にプレイヤーを追跡できる時刻
     /// </summary>
     private float _trakingTime = 0f;
-    EnemyBase _enemyContainer;
     //ランダムの座標
     [SerializeField] private float _randX = 100;
     [SerializeField] private float _randZ = 100;
@@ -45,7 +44,6 @@ public class EnemyMove : EnemyBase
     void Start()
     {
         _myAgent = GetComponent<NavMeshAgent>();
-        _enemyContainer = FindAnyObjectByType<EnemyBase>();
         _myAgent.speed = _wanderSpeed;
         SetNextWanderGoal();
     }
@@ -53,7 +51,7 @@ public class EnemyMove : EnemyBase
     // Update is called once per frame
     void Update()
     {
-        switch (_enemyContainer.enemyState)
+        switch (enemyState)
         {
             case EnemyState.Wander:
                 DetectPlayer();
@@ -76,9 +74,9 @@ public class EnemyMove : EnemyBase
     void DetectPlayer()
     {
         //檻を見つけている場合無視
-        if (_enemyContainer.enemyState == EnemyState.ChaseCage) return;
+        //if (_enemyContainer.enemyState == EnemyState.ChaseCage) return;
         // 捕まってる状態なら無視
-        if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        //if (_enemyContainer.enemyState == EnemyState.Getchued) return;
 
         Vector3 toPlayer = _targetPlayer.position - transform.position;
         float distance = toPlayer.magnitude;
@@ -111,9 +109,9 @@ public class EnemyMove : EnemyBase
     void DetectCage()
     {
         //プレイヤーを追いかけている場合無視
-        if (_enemyContainer.enemyState == EnemyState.ChasePlayer) return;
+        if (enemyState == EnemyState.ChasePlayer) return;
         // 捕まってる状態なら無視
-        if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        if (enemyState == EnemyState.Getchued) return;
 
         Vector3 toCage = _targetCage.position - transform.position;
         float distance = toCage.magnitude;
@@ -144,9 +142,9 @@ public class EnemyMove : EnemyBase
     {
 
         // 捕まってる状態なら無視
-        if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        //if (_enemyContainer.enemyState == EnemyState.Getchued) return;
 
-        _enemyContainer.enemyState = EnemyState.ChasePlayer;
+        enemyState = EnemyState.ChasePlayer;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(SetChaseDestination),3f);
         //SetChaseDestination();
@@ -162,12 +160,12 @@ public class EnemyMove : EnemyBase
     {
 
         // 捕まってる状態なら無視
-        if (_enemyContainer.enemyState == EnemyState.Getchued) return;
+        if (enemyState == EnemyState.Getchued) return;
 
-        _enemyContainer.enemyState = EnemyState.ChaseCage;
+        enemyState = EnemyState.ChaseCage;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(ChaseCage), 3f);
-        //Invoke(nameof(SetChaseDestination), 3f);
+        Invoke(nameof(SetChaseDestination), 3f);
         //SetChaseDestination();
         
 
@@ -198,7 +196,7 @@ public class EnemyMove : EnemyBase
         {
             canSeePlayer = true;
         }
-
+        //何か怪しい
         if (canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
         {
             Invoke(nameof(SetChaseDestination),3f);
@@ -217,7 +215,7 @@ public class EnemyMove : EnemyBase
     /// </summary>
     void ReturnToWander()
     {
-        _enemyContainer.enemyState = EnemyState.Wander;
+        enemyState = EnemyState.Wander;
         SetNextWanderGoal();
         _myAgent.speed = _wanderSpeed;
     }
@@ -240,6 +238,8 @@ public class EnemyMove : EnemyBase
         if (NavMesh.SamplePosition(randomPos, out NavMeshHit navMeshHit, 5f, NavMesh.AllAreas))
         {
             _myAgent.destination = navMeshHit.position;
+            //Debug.Log(_myAgent.destination);
+            //_myAgent.destination = _targetPlayer.position;
         }
     }
     /// <summary>
@@ -252,7 +252,6 @@ public class EnemyMove : EnemyBase
         Vector3 predictedPosition = _targetPlayer.position + toPlayer * _predictionDistance;
         // NavMesh経路取得用
         NavMeshPath path = new NavMeshPath();
-
         // 経路が計算できて、目標地点が有効ならセット
         if (NavMesh.CalculatePath(transform.position, predictedPosition, NavMesh.AllAreas, path) &&
             path.status == NavMeshPathStatus.PathComplete)
