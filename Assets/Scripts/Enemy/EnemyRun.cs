@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyMove : EnemyBase
+public class EnemyRun : EnemyBase
 {
+    [SerializeField] private float _runSpeed = 10f;
     [SerializeField] private float _chaseSpeed = 10f;
     [SerializeField] private float _wanderSpeed = 5f;
     [SerializeField] private Transform _targetPlayer;
@@ -40,6 +41,10 @@ public class EnemyMove : EnemyBase
     /// プレイヤーの10メートル先
     /// </summary>
     [SerializeField] private float _predictionDistance = 10f;
+    /// <summary>
+    /// プレイヤーから逃げる距離
+    /// </summary>
+    [SerializeField] private float _runDistance = 10f;
     Collider _collider;
     // Start is called before the first frame update
     void Start()
@@ -70,8 +75,8 @@ public class EnemyMove : EnemyBase
                     ReturnToWander();
                 }
                 break;
-            case EnemyState.ChasePlayer:
-                HandleChaseStatePlayer();
+            case EnemyState.RunFromPlayer:
+                HandleFleeState();
                 break;
             case EnemyState.Getchued:
                 _collider.enabled = false;
@@ -117,7 +122,7 @@ public class EnemyMove : EnemyBase
         if (!hit.collider.CompareTag("Player")) return;
 
         // プレイヤー見つけた
-        TryStartChasePlayer();
+        TryStartRunFromPlayer();
 
     }
 
@@ -156,15 +161,15 @@ public class EnemyMove : EnemyBase
     /// <summary>
     /// プレイヤー追跡開始処理
     /// </summary>
-    void TryStartChasePlayer()
+    void TryStartRunFromPlayer()
     {
 
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        enemyState = EnemyState.ChasePlayer;
-        _myAgent.speed = _chaseSpeed;
-        Invoke(nameof(SetChaseDestination), 3f);
+        enemyState = EnemyState.RunFromPlayer;
+        _myAgent.speed = _runSpeed;
+        SetFleeDestination();
         //SetChaseDestination();
 
         _trakingTime = Time.time;
@@ -193,36 +198,20 @@ public class EnemyMove : EnemyBase
 
 
     /// <summary>
-    /// プレイヤー追跡状態の処理
+    /// プレイヤーから逃げる処理
     /// </summary>
-    void HandleChaseStatePlayer()
+    void SetFleeDestination()
     {
-        Vector3 toPlayer = _targetPlayer.position - transform.position;
-        float distance = toPlayer.magnitude;
+        Vector3 awayFromPlayerDir = (transform.position - _targetPlayer.position).normalized;
+        Vector3 fleeTargetPos = transform.position + awayFromPlayerDir * _runDistance;
 
-        float angle = Vector3.Angle(transform.forward, toPlayer);
-        //Debug.Log("回転");
-        Vector3 eyePos = transform.position + Vector3.up;
-        int layerMask = ~(1 << 13);
-
-        bool canSeePlayer = false;
-        // Raycast でプレイヤーが視界に入っているかを確認
-        if (distance <= _sightRange && angle <= _viewAngleLimit &&
-            Physics.Raycast(eyePos, toPlayer.normalized, out RaycastHit hit, _sightRange, layerMask) &&
-            hit.collider.CompareTag("Player"))
+        if (NavMesh.SamplePosition(fleeTargetPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
         {
-            canSeePlayer = true;
+            _myAgent.SetDestination(hit.position);
         }
-        //何か怪しい
-        if (canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
+        else
         {
-            Invoke(nameof(SetChaseDestination), 3f);
-            //Debug.Log("発射1");
-            //SetChaseDestination();
-            _trakingTime += _trackingTimeLimit;
-        }
-        else if (!canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
-        {
+            Debug.Log("逃げる場所が見つからなかった！");
             ReturnToWander();
         }
     }
@@ -261,31 +250,18 @@ public class EnemyMove : EnemyBase
             //_myAgent.destination = _targetPlayer.position;
         }
     }
-    /// <summary>
-    /// 追跡状態の時、プレイヤーの向こう側に行く処理
-    /// </summary>
-    void SetChaseDestination()
-    {
-        //Debug.Log("発射2");
-        Vector3 toPlayer = (_targetPlayer.position - transform.position).normalized;
-        Vector3 predictedPosition = _targetPlayer.position + toPlayer * _predictionDistance;
-        // NavMesh経路取得用
-        NavMeshPath path = new NavMeshPath();
-        // 経路が計算できて、目標地点が有効ならセット
-        if (NavMesh.CalculatePath(transform.position, predictedPosition, NavMesh.AllAreas, path) &&
-            path.status == NavMeshPathStatus.PathComplete)
-        {
-            _myAgent.SetPath(path); // 経路全体をセット
-        }
-        else
-        {
-            // 経路が不正な場合はプレイヤーの現在地に向かう
-            _myAgent.SetDestination(_targetPlayer.position);
-        }
-    }
 
     void ChaseCage()
     {
         _myAgent.SetDestination(_targetCage.position);
     }
+    void HandleFleeState()
+    {
+        if (_myAgent.remainingDistance <= _allowableDistance && !_myAgent.pathPending)
+        {
+            ReturnToWander();
+            Debug.Log("逃げ切ったので徘徊に戻る");
+        }
+    }
+
 }

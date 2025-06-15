@@ -16,7 +16,8 @@ public class EnemyBase : MonoBehaviour
         ChaseCage,
         Attack,
         Freeze,
-        Getchued
+        Getchued,
+        RunFromPlayer
     };
 }
 
