@@ -61,7 +61,7 @@ public class EnemyRun : EnemyBase
         switch (enemyState)
         {
             case EnemyState.Wander:
-                if (_collider.enabled == false)
+                if (!_collider.enabled)
                 {
                     _collider.enabled = true;
                 }
@@ -69,25 +69,29 @@ public class EnemyRun : EnemyBase
                 DetectCage();
                 SetNextWanderGoal();
                 break;
+
             case EnemyState.ChaseCage:
-                if (_targetCage.gameObject.activeSelf == false)
+                if (!_targetCage.gameObject.activeSelf
+                    || Cage.Instance.Breaked)
                 {
                     ReturnToWander();
                 }
                 break;
+
             case EnemyState.RunFromPlayer:
                 HandleFleeState();
                 break;
+
             case EnemyState.Getchued:
                 _collider.enabled = false;
-                if (_targetCage.gameObject.activeSelf == false)
+                if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
                     Debug.Log("ÉèÉìÉ_Å[Ç…ñﬂÇÈ");
                     
                 }
                 break;
-
+                
         }
     }
 
