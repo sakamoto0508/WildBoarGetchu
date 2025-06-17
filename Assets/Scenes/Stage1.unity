@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9384ab8608cdc3d479fe89cd51eed48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindingMode: 5
+  m_BindingMode: 4
   m_FollowOffset: {x: 0, y: 3, z: -5}
   m_XDamping: 1
   m_YDamping: 1
@@ -1450,7 +1450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9384ab8608cdc3d479fe89cd51eed48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindingMode: 5
+  m_BindingMode: 4
   m_FollowOffset: {x: 0, y: 3, z: -5}
   m_XDamping: 1
   m_YDamping: 1
@@ -1626,7 +1626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9384ab8608cdc3d479fe89cd51eed48f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindingMode: 5
+  m_BindingMode: 4
   m_FollowOffset: {x: 0, y: 3, z: -5}
   m_XDamping: 1
   m_YDamping: 1
@@ -1829,7 +1829,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12628196, y: 0.000010234967, z: -0.0000013029222, w: 0.99199444}
+  m_LocalRotation: {x: 0.12628189, y: -0.00000001827141, z: 0.0000000023259685, w: 0.99199444}
   m_LocalPosition: {x: 6.6, y: 3, z: -34.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2988,7 +2988,7 @@ MonoBehaviour:
     m_RecenteringTime: 2
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
-  m_BindingMode: 5
+  m_BindingMode: 4
   m_SplineCurvature: 0.2
   m_Orbits:
   - m_Height: 3
@@ -3542,7 +3542,19 @@ PrefabInstance:
       objectReference: {fileID: 963194228}
     - target: {fileID: 1150634962210802929, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
       propertyPath: _jumpPower
-      value: 10
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1150634962210802929, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
+      propertyPath: _moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071743883109798697, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071743883109798697, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3672060009283088947, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
       propertyPath: m_Name
@@ -3668,12 +3680,12 @@ SceneRoots:
   m_Roots:
   - {fileID: 963194228}
   - {fileID: 705507995}
+  - {fileID: 227110717}
   - {fileID: 7933590123286621767}
   - {fileID: 1709702793}
   - {fileID: 1764290096}
   - {fileID: 8762331242766683576}
   - {fileID: 1597602757}
-  - {fileID: 227110717}
   - {fileID: 1839769875}
   - {fileID: 457274428}
   - {fileID: 577821844}
