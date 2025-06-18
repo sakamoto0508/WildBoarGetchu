@@ -71,11 +71,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: 0
-  _attackPower: 1
   _chaseSpeed: 5
   _wanderSpeed: 5
-  _targetPlayer: {fileID: 0}
-  _targetCage: {fileID: 0}
+  _targetPlayer: {fileID: 6860358051790473019, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
+  _targetCage: {fileID: 5378169154081051277, guid: b3e95c835eb76ae47a85ebe194c7a9aa, type: 3}
+  _animator: {fileID: 1912862375996151935}
   _trackingTimeLimit: 5
   _randX: 20
   _randZ: 20
@@ -212,6 +212,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5f04353700b529343a9fdb24a03737c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2573811052860240802}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5f04353700b529343a9fdb24a03737c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1912862375996151935}
   m_SourcePrefab: {fileID: 100100000, guid: 5f04353700b529343a9fdb24a03737c1, type: 3}
 --- !u!4 &777160727467880297 stripped
 Transform:
@@ -353,6 +356,27 @@ MonoBehaviour:
   - {fileID: 777160727467880297}
   - {fileID: 2963739670282018063}
   - {fileID: 3560078674436243272}
+--- !u!95 &1912862375996151935
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5958035982724088161}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a30a4b41f1b890c408129d88684463b5, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6477551222238976987 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5f04353700b529343a9fdb24a03737c1, type: 3}

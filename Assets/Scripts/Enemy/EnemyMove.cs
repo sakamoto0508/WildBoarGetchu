@@ -7,6 +7,7 @@ public class EnemyMove : EnemyBase
     [SerializeField] private float _wanderSpeed = 5f;
     [SerializeField] private Transform _targetPlayer;
     [SerializeField] private Transform _targetCage;
+    [SerializeField] private Animator _animator;
     /// <summary>
     /// 追跡可能な時間の感覚(クールタイム)
     /// </summary>
@@ -84,11 +85,12 @@ public class EnemyMove : EnemyBase
                 if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
-                    Debug.Log("ワンダーに戻る");
+                    //Debug.Log("ワンダーに戻る");
                 }
                 break;
 
         }
+        _animator.SetInteger("State", (int)enemyState);
     }
 
     /// <summary>
@@ -167,13 +169,14 @@ public class EnemyMove : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        enemyState = EnemyState.ChasePlayer;
+        //enemyState = EnemyState.ChasePlayer;
+        enemyState = EnemyState.RunUP;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(SetChaseDestination), 3f);
         //SetChaseDestination();
 
         _trakingTime = Time.time;
-        Debug.Log("プレイヤーをみつけたぜ！");
+        //Debug.Log("プレイヤーをみつけたぜ！");
     }
 
     /// <summary>
@@ -185,14 +188,16 @@ public class EnemyMove : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        enemyState = EnemyState.ChaseCage;
+        //enemyState = EnemyState.ChaseCage;
+        enemyState = EnemyState.RunUP;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(ChaseCage), 3f);
 
         //Invoke(nameof(SetChaseDestination), 3f);
         //SetChaseDestination();
+        //トラッキングタイムに一度今の時間を入れる
         _trakingTime = Time.time;
-        Debug.Log("檻ををみつけたぜ！");
+        //Debug.Log("檻ををみつけたぜ！");
     }
 
 
@@ -218,9 +223,10 @@ public class EnemyMove : EnemyBase
         {
             canSeePlayer = true;
         }
-        //何か怪しい
+        //トラッキングタイムから増えた時間とリミットを比べる
         if (canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
         {
+            enemyState = EnemyState.RunUP;
             Invoke(nameof(SetChaseDestination), 3f);
             //Debug.Log("発射1");
             //SetChaseDestination();
@@ -249,19 +255,21 @@ public class EnemyMove : EnemyBase
     /// </summary>
     void SetNextWanderGoal()
     {
+        enemyState = EnemyState.Wander;
         // 許容する距離の誤差内に居なければ新しい目的地を検索しない
         if ((_myAgent.destination - transform.position).sqrMagnitude > _allowableDistance * _allowableDistance)
         {
             return;
         }
 
-        Debug.Log($"目的地に着いたぜ！");
+        //Debug.Log($"目的地に着いたぜ！");
 
         Vector3 randomPos = new Vector3(Random.Range(_mRandX, _randX), 0, Random.Range(_mRandZ, _randZ));
 
         if (NavMesh.SamplePosition(randomPos, out NavMeshHit navMeshHit, 5f, NavMesh.AllAreas))
         {
             _myAgent.destination = navMeshHit.position;
+            
             //Debug.Log(_myAgent.destination);
             //_myAgent.destination = _targetPlayer.position;
         }
@@ -271,6 +279,7 @@ public class EnemyMove : EnemyBase
     /// </summary>
     void SetChaseDestination()
     {
+        enemyState = EnemyState.ChasePlayer;
         //Debug.Log("発射2");
         Vector3 toPlayer = (_targetPlayer.position - transform.position).normalized;
         Vector3 predictedPosition = _targetPlayer.position + toPlayer * _predictionDistance;
@@ -291,6 +300,8 @@ public class EnemyMove : EnemyBase
 
     void ChaseCage()
     {
+        enemyState = EnemyState.ChaseCage;
         _myAgent.SetDestination(_targetCage.position);
     }
+    
 }

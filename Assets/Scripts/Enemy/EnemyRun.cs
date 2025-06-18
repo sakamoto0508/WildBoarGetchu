@@ -1,3 +1,4 @@
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,7 @@ public class EnemyRun : EnemyBase
     [SerializeField] private float _wanderSpeed = 5f;
     [SerializeField] private Transform _targetPlayer;
     [SerializeField] private Transform _targetCage;
+    [SerializeField] private Animator _animator;
     /// <summary>
     /// 追跡可能な時間の感覚(クールタイム)
     /// </summary>
@@ -87,12 +89,14 @@ public class EnemyRun : EnemyBase
                 if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
-                    Debug.Log("ワンダーに戻る");
+                    //Debug.Log("ワンダーに戻る");
                     
                 }
                 break;
                 
         }
+
+        _animator.SetInteger("State", (int)enemyState);
     }
 
     /// <summary>
@@ -163,7 +167,7 @@ public class EnemyRun : EnemyBase
     }
 
     /// <summary>
-    /// プレイヤー追跡開始処理
+    /// プレイヤーから逃げる処理開始
     /// </summary>
     void TryStartRunFromPlayer()
     {
@@ -171,13 +175,14 @@ public class EnemyRun : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        enemyState = EnemyState.RunFromPlayer;
+        //enemyState = EnemyState.RunFromPlayer;
+        enemyState = EnemyState.RunUP;
         _myAgent.speed = _runSpeed;
         SetFleeDestination();
         //SetChaseDestination();
 
         _trakingTime = Time.time;
-        Debug.Log("プレイヤーをみつけたぜ！");
+        //Debug.Log("プレイヤーをみつけたぜ！");
     }
 
     /// <summary>
@@ -189,14 +194,15 @@ public class EnemyRun : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        enemyState = EnemyState.ChaseCage;
+        //enemyState = EnemyState.ChaseCage;
+        enemyState = EnemyState.RunUP;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(ChaseCage), 3f);
 
         //Invoke(nameof(SetChaseDestination), 3f);
         //SetChaseDestination();
         _trakingTime = Time.time;
-        Debug.Log("檻ををみつけたぜ！");
+        //Debug.Log("檻ををみつけたぜ！");
     }
 
 
@@ -211,11 +217,12 @@ public class EnemyRun : EnemyBase
 
         if (NavMesh.SamplePosition(fleeTargetPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
         {
+            enemyState = EnemyState.RunFromPlayer;
             _myAgent.SetDestination(hit.position);
         }
         else
         {
-            Debug.Log("逃げる場所が見つからなかった！");
+            //Debug.Log("逃げる場所が見つからなかった！");
             ReturnToWander();
         }
     }
@@ -237,13 +244,15 @@ public class EnemyRun : EnemyBase
     /// </summary>
     void SetNextWanderGoal()
     {
+        enemyState = EnemyState.Wander;
+
         // 許容する距離の誤差内に居なければ新しい目的地を検索しない
         if ((_myAgent.destination - transform.position).sqrMagnitude > _allowableDistance * _allowableDistance)
         {
             return;
         }
 
-        Debug.Log($"目的地に着いたぜ！");
+        //Debug.Log($"目的地に着いたぜ！");
 
         Vector3 randomPos = new Vector3(Random.Range(_mRandX, _randX), 0, Random.Range(_mRandZ, _randZ));
 
@@ -257,6 +266,7 @@ public class EnemyRun : EnemyBase
 
     void ChaseCage()
     {
+        enemyState = EnemyState.ChaseCage;
         _myAgent.SetDestination(_targetCage.position);
     }
     void HandleFleeState()
@@ -264,7 +274,7 @@ public class EnemyRun : EnemyBase
         if (_myAgent.remainingDistance <= _allowableDistance && !_myAgent.pathPending)
         {
             ReturnToWander();
-            Debug.Log("逃げ切ったので徘徊に戻る");
+            //Debug.Log("逃げ切ったので徘徊に戻る");
         }
     }
 

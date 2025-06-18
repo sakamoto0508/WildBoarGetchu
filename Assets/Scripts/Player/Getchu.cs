@@ -16,7 +16,7 @@ public class Getchu : MonoBehaviour
 
         if (other.tag == "Enemy" && _playerContainer.state == PlayerContainer.MyState.Attack)
         {
-            Debug.Log($"敵に当たった {other.name}");
+            //Debug.Log($"敵に当たった {other.name}");
             // NavMeshAgent を一時的に無効化（位置変更前）
             NavMeshAgent agent = other.GetComponent<NavMeshAgent>();
             if (agent != null)

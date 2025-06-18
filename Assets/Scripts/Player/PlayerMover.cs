@@ -30,7 +30,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
 
     public void PlayerUpdate()
     {
-        Jump();  
+        Jump();
         Attack();
         StateChange();
     }
@@ -205,6 +205,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
             _attackLimit += _coolTime;
         }
     }
+
     private void StateChange()
     {
         if (_container.state == PlayerContainer.MyState.Stan)
