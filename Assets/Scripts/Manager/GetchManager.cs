@@ -2,12 +2,15 @@ using UnityEngine;
 using Cinemachine;
 using System.Collections;
 using UnityEngine.AI;
+
 public class GetchuManager : MonoBehaviour
 {
     [SerializeField] private CinemachineFreeLook _mainCamera;
     [SerializeField] private CinemachineVirtualCamera _getchuCamera;
     //[SerializeField] private GameObject *getchuUI;
     [SerializeField] private AudioClip _getchuSE;
+
+
     public void PlayGetchuSequence(Transform enemyTransform, Transform teleportPoint, NavMeshAgent agent)
     {
         StartCoroutine(GetchuSequenceCoroutine(enemyTransform, teleportPoint, agent));

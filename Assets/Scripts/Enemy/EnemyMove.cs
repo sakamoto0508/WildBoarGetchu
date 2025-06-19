@@ -42,6 +42,19 @@ public class EnemyMove : EnemyBase
     /// </summary>
     [SerializeField] private float _predictionDistance = 10f;
     Collider _collider;
+    /// <summary>
+    /// Getchued状態になった時間を記録
+    /// </summary>
+    private float _getchuedStartTime = 0f;
+    /// <summary>
+    /// コライダーを無効化するまでの遅延時間
+    /// </summary>
+    [SerializeField] private float _colliderDisableDelay = 2f;
+    /// <summary>
+    /// コライダーが既に無効化されたかどうかのフラグ
+    /// </summary>
+    private bool _colliderDisabled = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,11 +93,25 @@ public class EnemyMove : EnemyBase
                 break;
 
             case EnemyState.Getchued:
-                _collider.enabled = false;
+                // Getchued状態になった直後の処理
+                if (_getchuedStartTime == 0f)
+                {
+                    _getchuedStartTime = Time.time;
+                    _colliderDisabled = false;
+                }
+
+                // 2秒経過後にコライダーを無効化
+                if (!_colliderDisabled && Time.time - _getchuedStartTime >= _colliderDisableDelay)
+                {
+                    _collider.enabled = false;
+                    _colliderDisabled = true;
+                    _getchuedStartTime = 0f;
+                }
 
                 if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
+                    //Debug.Log("ワンダーに戻る");
                 }
                 break;
 
