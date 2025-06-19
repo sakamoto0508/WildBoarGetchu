@@ -24,6 +24,13 @@ public class Getchu : MonoBehaviour
                 agent.enabled = false;
             }
 
+            // Getchu演出呼び出し
+            var getchuManager = FindObjectOfType<GetchuManager>();
+            if (getchuManager != null)
+            {
+                getchuManager.PlayGetchuSequence(other.transform);
+            }
+
             // 敵をテレポート
             other.transform.position = _teleportPoint.transform.position;
 
