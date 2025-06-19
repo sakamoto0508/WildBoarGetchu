@@ -85,7 +85,6 @@ public class EnemyMove : EnemyBase
                 if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
-                    //Debug.Log("ワンダーに戻る");
                 }
                 break;
 
@@ -169,14 +168,11 @@ public class EnemyMove : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        //enemyState = EnemyState.ChasePlayer;
         enemyState = EnemyState.RunUP;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(SetChaseDestination), 3f);
-        //SetChaseDestination();
 
         _trakingTime = Time.time;
-        //Debug.Log("プレイヤーをみつけたぜ！");
     }
 
     /// <summary>
@@ -188,16 +184,13 @@ public class EnemyMove : EnemyBase
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
-        //enemyState = EnemyState.ChaseCage;
         enemyState = EnemyState.RunUP;
         _myAgent.speed = _chaseSpeed;
         Invoke(nameof(ChaseCage), 3f);
 
-        //Invoke(nameof(SetChaseDestination), 3f);
-        //SetChaseDestination();
+        
         //トラッキングタイムに一度今の時間を入れる
         _trakingTime = Time.time;
-        //Debug.Log("檻ををみつけたぜ！");
     }
 
 
@@ -211,7 +204,6 @@ public class EnemyMove : EnemyBase
         float distance = toPlayer.magnitude;
 
         float angle = Vector3.Angle(transform.forward, toPlayer);
-        //Debug.Log("回転");
         Vector3 eyePos = transform.position + Vector3.up;
         int layerMask = ~(1 << 13);
 
@@ -228,8 +220,6 @@ public class EnemyMove : EnemyBase
         {
             enemyState = EnemyState.RunUP;
             Invoke(nameof(SetChaseDestination), 3f);
-            //Debug.Log("発射1");
-            //SetChaseDestination();
             _trakingTime += _trackingTimeLimit;
         }
         else if (!canSeePlayer && Time.time - _trakingTime >= _trackingTimeLimit)
@@ -262,7 +252,6 @@ public class EnemyMove : EnemyBase
             return;
         }
 
-        //Debug.Log($"目的地に着いたぜ！");
 
         Vector3 randomPos = new Vector3(Random.Range(_mRandX, _randX), 0, Random.Range(_mRandZ, _randZ));
 
@@ -270,8 +259,6 @@ public class EnemyMove : EnemyBase
         {
             _myAgent.destination = navMeshHit.position;
             
-            //Debug.Log(_myAgent.destination);
-            //_myAgent.destination = _targetPlayer.position;
         }
     }
     /// <summary>
@@ -280,7 +267,6 @@ public class EnemyMove : EnemyBase
     void SetChaseDestination()
     {
         enemyState = EnemyState.ChasePlayer;
-        //Debug.Log("発射2");
         Vector3 toPlayer = (_targetPlayer.position - transform.position).normalized;
         Vector3 predictedPosition = _targetPlayer.position + toPlayer * _predictionDistance;
         // NavMesh経路取得用
