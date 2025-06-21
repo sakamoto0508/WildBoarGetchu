@@ -12,14 +12,16 @@ public class GameManager : MonoBehaviour
     // シングルトンインスタンス
     public static GameManager Instance { get; private set; }
 
-    [Header("クリア後のUI表示")]
+    [Header("クリア後の表示")]
     [SerializeField] private GameObject _clearUIPanel;
+    [SerializeField] private AudioSource _clearSE;
 
     private List<EnemyBase> _enemies;
     private bool _hasCleared = false;
 
     private void Awake()
     {
+        _clearSE = GetComponent<AudioSource>();
         // シングルトン初期化
         if (Instance == null)
         {
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
     private void OnGameCleared()
     {
         Debug.Log("全ての敵を捕まえた！ゲームクリア！");
-
+        _clearSE.PlayOneShot(_clearSE.clip);
         // クリアUIを表示
         if (_clearUIPanel != null)
             _clearUIPanel.SetActive(true);

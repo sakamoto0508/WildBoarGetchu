@@ -9,6 +9,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
     [SerializeField] private Transform _camera;
     [SerializeField] private Animator _animator;
     [SerializeField] private float _coolTime = 1.5f;
+    [SerializeField] private AudioSource _damageSE;
 
     private Rigidbody _rb;
     private bool _canJump = true;
@@ -26,6 +27,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
         //FixedUpdate  LateUpdate のズレを補間
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
         _container = FindAnyObjectByType<PlayerContainer>();
+        _damageSE = GetComponent<AudioSource>();
     }
 
     public void PlayerUpdate()
@@ -42,45 +44,6 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
         RotateTest();
     }
 
-    private void Move()
-    {
-        // 入力取得
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        // カメラの前方と右方向を使って入力方向をワールド空間に変換
-        Vector3 forward = _camera.forward;
-        Vector3 right = _camera.right;
-
-        // Y軸方向の影響を除外（平面移動のため）
-        forward.y = 0;
-        right.y = 0;
-
-        forward.Normalize();
-        right.Normalize();
-
-        // カメラの向きをベースにした移動ベクトル
-        Vector3 moveDirection = (forward * vertical + right * horizontal).normalized * _moveSpeed;
-        moveDirection = new Vector3(moveDirection.x, _rb.velocity.y, moveDirection.z);
-
-        // 状態に応じた移動の制御
-        if (_container.state == PlayerContainer.MyState.Normal)
-        {
-            _rb.AddForce(moveDirection - _rb.velocity);
-        }
-        else if (_container.state == PlayerContainer.MyState.Attack)
-        {
-            _rb.AddForce(moveDirection / 15f - _rb.velocity);
-        }
-        else if (_container.state == PlayerContainer.MyState.Stan)
-        {
-            _rb.velocity = Vector3.zero;
-        }
-
-        // アニメーション：一定以上速度が出ていれば走っていると判定
-        _isRunning = _rb.velocity.magnitude > 0.2f;
-        _animator.SetBool("IsRunning", _isRunning);
-    }
 
     private void MoveTest()
     {
@@ -147,29 +110,12 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
         if (collision.gameObject.tag == "Enemy")
         {
             _container.state = PlayerContainer.MyState.Stan;
+            //AudioSource.PlayClipAtPoint(_damageSE, Camera.main.transform.position);
+            _damageSE.PlayOneShot(_damageSE.clip);
             _canAttack = false;
         }
     }
-    /// <summary>
-    /// カメラの向きに基づいてプレイヤーを回転させる
-    /// </summary>
-    private void Rotate()
-    {
-        // カメラ向きに基づいた目標回転を計算
-        Vector3 dir = _camera.forward; dir.y = 0;
-        if (dir.sqrMagnitude < 0.01f) return;
-        //LookRotation: 指定した方向を向くためのQuaternionを生成
-        Quaternion targetRot = Quaternion.LookRotation(dir);
-
-        // Rigidbody の MoveRotation で回転FixedDeltaTime を使って滑らかに補間
-        Quaternion newRot = Quaternion.Slerp(
-            _rb.rotation,//現在の回転
-            targetRot,//目標回転
-            _rotateSpeed * Time.fixedDeltaTime//補完速度
-        );
-        //MoveRotation: 物理演算と整合性を保った回転方法
-        _rb.MoveRotation(newRot);
-    }
+    
     private void RotateTest()
     {
         // 移動している場合のみ回転

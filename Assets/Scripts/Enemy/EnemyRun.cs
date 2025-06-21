@@ -60,13 +60,18 @@ public class EnemyRun : EnemyBase
     /// コライダーが既に無効化されたかどうかのフラグ
     /// </summary>
     private bool _colliderDisabled = false;
-
+    [SerializeField] private GameObject _xclamation;
+    [SerializeField] private AudioSource _findSE;
+    private float _lastSETime = -10f;
+    [SerializeField] private float _seCooldown = 1f;
     // Start is called before the first frame update
     void Start()
     {
         _myAgent = GetComponent<NavMeshAgent>();
         _collider = GetComponent<Collider>();
+        _findSE = GetComponent<AudioSource>();
         _myAgent.speed = _wanderSpeed;
+        _xclamation.SetActive(false);
         SetNextWanderGoal();
     }
 
@@ -80,12 +85,15 @@ public class EnemyRun : EnemyBase
                 {
                     _collider.enabled = true;
                 }
+                _xclamation.SetActive(false);
                 DetectPlayer();
                 DetectCage();
                 SetNextWanderGoal();
                 break;
 
             case EnemyState.ChaseCage:
+                
+                _xclamation.SetActive(true);
                 if (!_targetCage.gameObject.activeSelf
                     || Cage.Instance.Breaked)
                 {
@@ -94,10 +102,22 @@ public class EnemyRun : EnemyBase
                 break;
 
             case EnemyState.RunFromPlayer:
+                
+                _xclamation.SetActive(true);
                 HandleFleeState();
                 break;
 
             case EnemyState.Getchued:
+                _xclamation.SetActive(false);
+
+                // NavMeshAgentが有効な場合は完全に停止
+                if (_myAgent.enabled)
+                {
+                    _myAgent.isStopped = true;
+                    _myAgent.ResetPath();
+                    _myAgent.velocity = Vector3.zero;
+                }
+
                 // Getchued状態になった直後の処理
                 if (_getchuedStartTime == 0f)
                 {
@@ -110,18 +130,22 @@ public class EnemyRun : EnemyBase
                 {
                     _collider.enabled = false;
                     _colliderDisabled = true;
-                    _getchuedStartTime = 0f;
+
+                    // NavMeshAgentも再度停止を確実にする
+                    if (_myAgent.enabled)
+                    {
+                        _myAgent.isStopped = true;
+                        _myAgent.ResetPath();
+                    }
                 }
 
+                // 檻が無くなったらワンダーに戻る
                 if (!_targetCage.gameObject.activeSelf)
                 {
                     ReturnToWander();
-                    //Debug.Log("ワンダーに戻る");
                 }
                 break;
-
         }
-
         _animator.SetInteger("State", (int)enemyState);
     }
 
@@ -154,7 +178,8 @@ public class EnemyRun : EnemyBase
 
         // プレイヤー以外のオブジェクトに遮られていれば無視
         if (!hit.collider.CompareTag("Player")) return;
-
+        //SEを再生
+        PlayFindSEOnce();
         // プレイヤー見つけた
         TryStartRunFromPlayer();
 
@@ -187,6 +212,8 @@ public class EnemyRun : EnemyBase
         if (!Physics.Raycast(eyePos, toCage.normalized, out RaycastHit hit, _sightRange, layerMask)) return;
         // プレイヤー以外のオブジェクトに遮られていれば無視
         if (!hit.collider.CompareTag("Cage")) return;
+        //SEを再生
+        PlayFindSEOnce();
         // 檻を見つけた
         TryStartChaseCage();
 
@@ -197,7 +224,6 @@ public class EnemyRun : EnemyBase
     /// </summary>
     void TryStartRunFromPlayer()
     {
-
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
@@ -216,7 +242,6 @@ public class EnemyRun : EnemyBase
     /// </summary>
     void TryStartChaseCage()
     {
-
         // 捕まってる状態なら無視
         if (enemyState == EnemyState.Getchued) return;
 
@@ -259,10 +284,26 @@ public class EnemyRun : EnemyBase
     void ReturnToWander()
     {
         enemyState = EnemyState.Wander;
-        SetNextWanderGoal();
         _myAgent.speed = _wanderSpeed;
-        
-       
+
+        // NavMeshAgentが無効化されている場合は有効化
+        if (!_myAgent.enabled)
+        {
+            _myAgent.enabled = true;
+        }
+
+        _myAgent.isStopped = false; // 移動を再開
+        SetNextWanderGoal();
+
+        // Getchued関連の変数をリセット
+        _getchuedStartTime = 0f;
+        _colliderDisabled = false;
+
+        // コライダーも有効化
+        if (!_collider.enabled)
+        {
+            _collider.enabled = true;
+        }
     }
 
     /// <summary>
@@ -303,5 +344,12 @@ public class EnemyRun : EnemyBase
             //Debug.Log("逃げ切ったので徘徊に戻る");
         }
     }
-
+    void PlayFindSEOnce()
+    {
+        if (Time.time - _lastSETime >= _seCooldown)
+        {
+            _findSE.PlayOneShot(_findSE.clip);
+            _lastSETime = Time.time;
+        }
+    }
 }
