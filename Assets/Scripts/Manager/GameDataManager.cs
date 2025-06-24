@@ -49,30 +49,6 @@ public class GameDataManager : MonoBehaviour
         _remaing = 3;
        
     }
-    public void Damage(int damage)
-    {
-        _hp -= damage;
-        if (_hp <= 0)
-        {
-            PlayerDead();
-            return;
-        }
-        SoundManager.Instance.PlaySE(_damageSE);
-    }
-    public void PlayerDead()
-    {
-        _remaing--;
-        if (_remaing <= 0)
-        {
-            SceneManager.LoadScene("GameOver");
-            return;
-        }
-        PlayerRestart();
-        SoundManager.Instance.PlaySE(_DeadSE);
-    }
-    void PlayerRestart()
-    {
-        _hp = _defaultHp;
-        
-    }
+    
+    
 }

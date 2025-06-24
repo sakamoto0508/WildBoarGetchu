@@ -39,6 +39,7 @@ public class PlayerContainer : MonoBehaviour
     {
         Normal,
         Stan,
-        Attack
+        Attack,
+        Victory
     };
 }

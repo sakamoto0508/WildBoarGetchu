@@ -1,7 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static EnemyBase;
 
 /// <summary>
@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     [Header("クリア後の表示")]
     [SerializeField] private GameObject _clearUIPanel;
     [SerializeField] private AudioSource _clearSE;
+    [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _teleportPoint;
 
     private List<EnemyBase> _enemies;
     private bool _hasCleared = false;
@@ -64,13 +66,43 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void OnGameCleared()
     {
-        Debug.Log("全ての敵を捕まえた！ゲームクリア！");
         _clearSE.PlayOneShot(_clearSE.clip);
-        // クリアUIを表示
-        if (_clearUIPanel != null)
-            _clearUIPanel.SetActive(true);
-
-        // 次のシーンへ遷移したい場合は以下を有効化
-        // SceneManager.LoadScene("NextSceneName");
+        //テレポート実行
+        PlayerTeleport();
+        // エモート実行とタイトル戻りのコルーチンを開始
+        //StartCoroutine(ClearSequence());
     }
+    private void PlayerTeleport()
+    {
+        // PlayerMoverを無効化
+        var playerMover = _player.GetComponent<PlayerMover>();
+        if (playerMover != null)
+        {
+            playerMover.enabled = false;
+        }
+
+        // Rigidbodyの速度をリセット
+        Rigidbody playerRb = _player.GetComponent<Rigidbody>();
+        if (playerRb != null)
+        {
+            playerRb.velocity = Vector3.zero;
+            playerRb.angularVelocity = Vector3.zero;
+        }
+        Debug.Log($"テレポート前の位置: {_player.transform.position}");
+        Debug.Log($"テレポート先の位置: {_teleportPoint.transform.position}");
+        // テレポート実行
+        _player.transform.position = _teleportPoint.transform.position;
+        Debug.Log($"テレポート後の位置: {_player.transform.position}");
+        // 少し待ってからPlayerMoverを再有効化（必要に応じて）
+        StartCoroutine(ReenablePlayerMover(playerMover));
+    }
+    private IEnumerator ReenablePlayerMover(PlayerMover playerMover)
+    {
+        yield return new WaitForSeconds(10f); // 1秒待つ
+        if (playerMover != null)
+        {
+            playerMover.enabled = true;
+        }
+    }
+
 }

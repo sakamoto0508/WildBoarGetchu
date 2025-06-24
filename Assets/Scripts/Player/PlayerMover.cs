@@ -10,6 +10,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
     [SerializeField] private Animator _animator;
     [SerializeField] private float _coolTime = 1.5f;
     [SerializeField] private AudioSource _damageSE;
+    [SerializeField] private GameObject _hitPS;
 
     private Rigidbody _rb;
     private bool _canJump = true;
@@ -110,7 +111,16 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
         if (collision.gameObject.tag == "Enemy")
         {
             _container.state = PlayerContainer.MyState.Stan;
-            //AudioSource.PlayClipAtPoint(_damageSE, Camera.main.transform.position);
+            // 衝突位置を取得（最初の接触点）
+            Vector3 hitPoint = collision.contacts[0].point;
+            // パーティクルプレハブをインスタンス化
+            GameObject hitEffect = Instantiate(_hitPS, hitPoint, Quaternion.identity);
+            // パーティクルの再生（PlayOnAwakeがオフなら必要）
+            ParticleSystem ps = hitEffect.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Play();
+            }
             _damageSE.PlayOneShot(_damageSE.clip);
             _canAttack = false;
         }
