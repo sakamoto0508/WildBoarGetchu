@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         {
             _enemies = FindObjectsOfType<EnemyBase>().ToList();
             _hasCleared = false;
-            
+
         }
     }
     private void Awake()
@@ -83,18 +83,9 @@ public class GameManager : MonoBehaviour
     {
         // プレイヤーのAnimator再取得
         var player = GameObject.FindAnyObjectByType<PlayerMover>();
-        if (player != null)
-        {
-            _playerAnimator = player.GetComponent<Animator>();
-            // 複数の方法でパーティクルを探す
-            _playerEmoteEffect = player.GetComponentInChildren<ParticleSystem>();
-            
-        }
-        if (_playerAnimator != null)
-        {
-            _playerAnimator.SetTrigger("Clear");
-        }
-            _playerEmoteEffect.Play();
+        _playerAnimator = player.GetComponentInChildren<Animator>();
+        _playerAnimator.SetTrigger("Clear");
+        _playerEmoteEffect.Play();
     }
     private void ReturnToTitle()
     {
