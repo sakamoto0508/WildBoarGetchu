@@ -28,7 +28,6 @@ public class GetchuManager : MonoBehaviour
             _getchuCamera = FindObjectOfType<CinemachineVirtualCamera>();
             if (_getchuCamera == null)
             {
-                Debug.LogError("GetchuCamera が見つかりません。シーンに存在しますか？");
                 yield break;
             }
         }
@@ -38,7 +37,6 @@ public class GetchuManager : MonoBehaviour
             _mainCamera = FindObjectOfType<CinemachineFreeLook>();
             if (_mainCamera == null)
             {
-                Debug.LogError("MainCamera が見つかりません。シーンに存在しますか？");
                 yield break;
             }
         }

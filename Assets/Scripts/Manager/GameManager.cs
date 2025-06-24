@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        Debug.Log("onenable");
     }
     private void OnDisable()
     {
@@ -81,10 +80,19 @@ public class GameManager : MonoBehaviour
     }
     private void PlayPlayerEmote()
     {
-        // プレイヤーのAnimator再取得
+        // プレイヤーのコンポーネントを取得
         var player = GameObject.FindAnyObjectByType<PlayerMover>();
         _playerAnimator = player.GetComponentInChildren<Animator>();
+        if (_playerAnimator == null)
+        {
+            _playerAnimator = player.GetComponentInChildren<Animator>();
+        }
         _playerAnimator.SetTrigger("Clear");
+        if (_playerEmoteEffect == null)
+        {
+            player = GameObject.FindAnyObjectByType<PlayerMover>();
+            _playerEmoteEffect=player.GetComponentInChildren<ParticleSystem>();
+        }
         _playerEmoteEffect.Play();
     }
     private void ReturnToTitle()
