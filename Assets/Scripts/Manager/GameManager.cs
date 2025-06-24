@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static EnemyBase;
-
+using UnityEngine.SceneManagement;
 /// <summary>
 /// 全ての敵が捕まったらゲームクリアを判定するマネージャー
 /// </summary>
@@ -15,12 +16,46 @@ public class GameManager : MonoBehaviour
     [Header("クリア後の表示")]
     [SerializeField] private GameObject _clearUIPanel;
     [SerializeField] private AudioSource _clearSE;
-    [SerializeField] private GameObject _player;
-    [SerializeField] private GameObject _teleportPoint;
+    [SerializeField] private float _delayBeforeReturnToTitle = 5f; // タイトルに戻るまでの秒数
+    [SerializeField] private string _titleSceneName = "Title";
+    [SerializeField] private Animator _playerAnimator;
 
     private List<EnemyBase> _enemies;
     private bool _hasCleared = false;
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != _titleSceneName)
+        {
+            _enemies = FindObjectsOfType<EnemyBase>().ToList();
+            _hasCleared = false;
+
+            // UI非表示
+            if (_clearUIPanel != null)
+                _clearUIPanel.SetActive(false);
+
+            // プレイヤーのAnimator再取得
+            var player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                _playerAnimator = player.GetComponent<Animator>();
+            }
+            else
+            {
+                Debug.LogWarning("Playerがシーン内に見つかりません");
+            }
+        }
+    }
     private void Awake()
     {
         _clearSE = GetComponent<AudioSource>();
@@ -67,42 +102,51 @@ public class GameManager : MonoBehaviour
     private void OnGameCleared()
     {
         _clearSE.PlayOneShot(_clearSE.clip);
-        //テレポート実行
-        PlayerTeleport();
         // エモート実行とタイトル戻りのコルーチンを開始
-        //StartCoroutine(ClearSequence());
+        StartCoroutine(ClearSequence());
     }
-    private void PlayerTeleport()
+    /// <summary>
+    /// クリア後のシーケンス（エモート→タイトル戻り）
+    /// </summary>
+    private IEnumerator ClearSequence()
     {
-        // PlayerMoverを無効化
-        var playerMover = _player.GetComponent<PlayerMover>();
-        if (playerMover != null)
+        // クリアUIを表示
+        if (_clearUIPanel != null)
         {
-            playerMover.enabled = false;
+            _clearUIPanel.SetActive(true);
         }
 
-        // Rigidbodyの速度をリセット
-        Rigidbody playerRb = _player.GetComponent<Rigidbody>();
-        if (playerRb != null)
-        {
-            playerRb.velocity = Vector3.zero;
-            playerRb.angularVelocity = Vector3.zero;
-        }
-        Debug.Log($"テレポート前の位置: {_player.transform.position}");
-        Debug.Log($"テレポート先の位置: {_teleportPoint.transform.position}");
-        // テレポート実行
-        _player.transform.position = _teleportPoint.transform.position;
-        Debug.Log($"テレポート後の位置: {_player.transform.position}");
-        // 少し待ってからPlayerMoverを再有効化（必要に応じて）
-        StartCoroutine(ReenablePlayerMover(playerMover));
-    }
-    private IEnumerator ReenablePlayerMover(PlayerMover playerMover)
-    {
-        yield return new WaitForSeconds(10f); // 1秒待つ
-        if (playerMover != null)
-        {
-            playerMover.enabled = true;
-        }
+        // プレイヤーのエモートを実行
+        PlayPlayerEmote();
+
+        // 指定秒数待機
+        yield return new WaitForSeconds(_delayBeforeReturnToTitle);
+
+        // タイトルシーンに戻る
+        ReturnToTitle();
     }
 
+    /// <summary>
+    /// プレイヤーのエモートを実行
+    /// </summary>
+    private void PlayPlayerEmote()
+    {
+        Animator playerAnimator = _playerAnimator.GetComponent<Animator>();
+        // アニメーションを再生
+        playerAnimator.SetTrigger("Clear");
+
+        // 例：パーティクルエフェクト、追加のSE再生など
+
+    }
+
+    /// <summary>
+    /// タイトルシーンに戻る
+    /// </summary>
+    private void ReturnToTitle()
+    {
+        // フェードアウト効果などがある場合はここで実行
+
+        // タイトルシーンをロード
+        SceneManager.LoadScene(_titleSceneName);
+    }
 }

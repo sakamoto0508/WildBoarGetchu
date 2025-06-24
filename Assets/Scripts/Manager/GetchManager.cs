@@ -9,6 +9,12 @@ public class GetchuManager : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera _getchuCamera;
     [SerializeField] private ParticleSystem _getchuEffectPrefab;
 
+    private void Start()
+    {
+        if (_mainCamera == null) ;
+        if (_getchuCamera == null) ;
+        if (_getchuEffectPrefab == null) ; 
+    }
     public void PlayGetchuSequence(Transform enemyTransform, Transform teleportPoint, NavMeshAgent agent)
     {
         StartCoroutine(GetchuSequenceCoroutine(enemyTransform, teleportPoint, agent));
@@ -16,6 +22,26 @@ public class GetchuManager : MonoBehaviour
 
     private IEnumerator GetchuSequenceCoroutine(Transform enemyTransform, Transform teleportPoint, NavMeshAgent agent)
     {
+        // nullチェックと再取得
+        if (_getchuCamera == null)
+        {
+            _getchuCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            if (_getchuCamera == null)
+            {
+                Debug.LogError("GetchuCamera が見つかりません。シーンに存在しますか？");
+                yield break;
+            }
+        }
+
+        if (_mainCamera == null)
+        {
+            _mainCamera = FindObjectOfType<CinemachineFreeLook>();
+            if (_mainCamera == null)
+            {
+                Debug.LogError("MainCamera が見つかりません。シーンに存在しますか？");
+                yield break;
+            }
+        }
         // NavMeshAgentを完全に停止
         if (agent != null)
         {

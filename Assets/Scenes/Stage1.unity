@@ -2070,6 +2070,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af90fe2f0f252bf4b8c2ab79bcd41edf, type: 3}
+--- !u!95 &2069305292 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3652831875494092769, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
+  m_PrefabInstance: {fileID: 7613453882604491513}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2112492936
 GameObject:
   m_ObjectHideFlags: 3
@@ -2489,12 +2494,17 @@ PrefabInstance:
       propertyPath: _teleportPoint
       value: 
       objectReference: {fileID: 1303468099}
+    - target: {fileID: 8135673876825834200, guid: da3294596c78fc64eb42336ac963addb, type: 3}
+      propertyPath: _playerAnimator
+      value: 
+      objectReference: {fileID: 2069305292}
     - target: {fileID: 8589698624261772867, guid: da3294596c78fc64eb42336ac963addb, type: 3}
       propertyPath: m_Name
       value: GameManagers
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5970280128388386148, guid: da3294596c78fc64eb42336ac963addb, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da3294596c78fc64eb42336ac963addb, type: 3}
@@ -2514,6 +2524,14 @@ PrefabInstance:
       propertyPath: _teleportPoint
       value: 
       objectReference: {fileID: 51848140}
+    - target: {fileID: 3652831875494092769, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3652831875494092769, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4835767879272500168, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
       propertyPath: _camera
       value: 

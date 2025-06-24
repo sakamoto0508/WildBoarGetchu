@@ -20,8 +20,6 @@ public class PlayerContainer : MonoBehaviour
     void Start()
     {
         _playerMovers = GetComponents<IPlayerMover>();
-        GameDataManager.Instance.Player = gameObject;
-        GameDataManager.Instance.Init();
     }
     /// <summary>
     /// プレイヤーの移動処理を実行する

@@ -25,7 +25,7 @@ public class GameDataManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
         _defaultHp = _hp;
         if (!Instance)
         {
