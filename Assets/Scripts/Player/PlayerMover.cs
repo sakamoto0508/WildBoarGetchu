@@ -11,6 +11,8 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
     [SerializeField] private float _coolTime = 1.5f;
     [SerializeField] private AudioSource _damageSE;
     [SerializeField] private GameObject _hitPS;
+    [SerializeField] private float _fallPoint = 0f;
+    [SerializeField] private GameObject _resetPosition;
 
     private Rigidbody _rb;
     private bool _canJump = true;
@@ -36,6 +38,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
         Jump();
         Attack();
         StateChange();
+        PlayerReset();
     }
     private void FixedUpdate()
     {
@@ -173,6 +176,14 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
                 _canAttack = true;
                 _stanTime = 0;
             }
+        }
+    }
+
+    private void PlayerReset()
+    {
+        if (this.transform.position.y <= _fallPoint)
+        {
+            this.transform.position = _resetPosition.transform.position;
         }
     }
 }

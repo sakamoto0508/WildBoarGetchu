@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static EnemyBase;
-using UnityEngine.SceneManagement;
 /// <summary>
 /// 全ての敵が捕まったらゲームクリアを判定するマネージャー
 /// </summary>
@@ -14,11 +13,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("クリア後の表示")]
-    [SerializeField] private GameObject _clearUIPanel;
     [SerializeField] private AudioSource _clearSE;
     [SerializeField] private float _delayBeforeReturnToTitle = 5f; // タイトルに戻るまでの秒数
     [SerializeField] private string _titleSceneName = "Title";
     [SerializeField] private Animator _playerAnimator;
+    [SerializeField] private ParticleSystem[] _particles; 
+    [SerializeField] private float _interval = 0.5f; // ずらす間隔
+    [SerializeField] private float _loopInterval = 2f; // 1周のサイクル時間
 
     private List<EnemyBase> _enemies;
     private bool _hasCleared = false;
@@ -40,9 +41,6 @@ public class GameManager : MonoBehaviour
             _enemies = FindObjectsOfType<EnemyBase>().ToList();
             _hasCleared = false;
 
-            // UI非表示
-            if (_clearUIPanel != null)
-                _clearUIPanel.SetActive(false);
 
             // プレイヤーのAnimator再取得
             var player = GameObject.FindWithTag("Player");
@@ -77,9 +75,7 @@ public class GameManager : MonoBehaviour
         // シーン内の全EnemyBaseを収集
         _enemies = FindObjectsOfType<EnemyBase>().ToList();
 
-        // クリア用UIを非表示
-        if (_clearUIPanel != null)
-            _clearUIPanel.SetActive(false);
+        
     }
 
     private void Update()
@@ -110,11 +106,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private IEnumerator ClearSequence()
     {
-        // クリアUIを表示
-        if (_clearUIPanel != null)
-        {
-            _clearUIPanel.SetActive(true);
-        }
 
         // プレイヤーのエモートを実行
         PlayPlayerEmote();
@@ -136,7 +127,7 @@ public class GameManager : MonoBehaviour
         playerAnimator.SetTrigger("Clear");
 
         // 例：パーティクルエフェクト、追加のSE再生など
-
+        StartCoroutine(LoopPlayParticles());
     }
 
     /// <summary>
@@ -148,5 +139,23 @@ public class GameManager : MonoBehaviour
 
         // タイトルシーンをロード
         SceneManager.LoadScene(_titleSceneName);
+    }
+    private IEnumerator LoopPlayParticles()
+    {
+        while (true)
+        {
+            for (int i = 0; i < _particles.Length; i++)
+            {
+                _particles[i].Play();
+                yield return new WaitForSeconds(_interval);
+            }
+
+            // 全て再生した後、再度ループまでの待機時間
+            float waitTime = _loopInterval - (_interval * _particles.Length);
+            if (waitTime > 0)
+            {
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
     }
 }

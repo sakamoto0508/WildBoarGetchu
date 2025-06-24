@@ -128,10 +128,10 @@ MonoBehaviour:
   _targetCage: {fileID: 5378169154081051277, guid: b3e95c835eb76ae47a85ebe194c7a9aa, type: 3}
   _animator: {fileID: 1695671217079728682}
   _trackingTimeLimit: 5
-  _randX: 100
-  _randZ: 100
-  _mRandX: -100
-  _mRandZ: -100
+  _randX: 48.5
+  _randZ: 29.5
+  _mRandX: -48.5
+  _mRandZ: -68.5
   _allowableDistance: 1
   _sightRange: 25
   _viewAngleLimit: 35
