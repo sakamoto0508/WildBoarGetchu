@@ -301,6 +301,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2043275658}
     - target: {fileID: 8135673876825834200, guid: da3294596c78fc64eb42336ac963addb, type: 3}
+      propertyPath: _playerEmoteEffect
+      value: 
+      objectReference: {fileID: 1237692987}
+    - target: {fileID: 8135673876825834200, guid: da3294596c78fc64eb42336ac963addb, type: 3}
       propertyPath: _particles.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -796,6 +800,22 @@ PrefabInstance:
       value: Boar
       objectReference: {fileID: 0}
     - target: {fileID: 2293486305053957616, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
+      propertyPath: _randX
+      value: -0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2293486305053957616, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
+      propertyPath: _randZ
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2293486305053957616, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
+      propertyPath: _mRandX
+      value: -0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2293486305053957616, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
+      propertyPath: _mRandZ
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2293486305053957616, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
       propertyPath: _runSpeed
       value: 0
       objectReference: {fileID: 0}
@@ -819,6 +839,10 @@ PrefabInstance:
       propertyPath: _targetPlayer
       value: 
       objectReference: {fileID: 602511675}
+    - target: {fileID: 2648834326899793640, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7207864440889340823, guid: 10a6b8f650a9b6c49b6a31dbebb7d646, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.75
@@ -1087,6 +1111,11 @@ ParticleSystem:
 --- !u!198 &1214882370 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 3807956684521442781, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
+  m_PrefabInstance: {fileID: 458802980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1237692987 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4273458267053011799, guid: a44053396cefba145b43e5e859bc4e43, type: 3}
   m_PrefabInstance: {fileID: 458802980}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1382612819 stripped

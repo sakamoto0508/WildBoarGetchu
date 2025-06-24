@@ -97,13 +97,7 @@ MonoBehaviour:
   _delayBeforeReturnToTitle: 5
   _titleSceneName: Title
   _playerAnimator: {fileID: 0}
-  _particles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _interval: 0.5
-  _loopInterval: 2
+  _playerEmoteEffect: {fileID: 0}
 --- !u!82 &7717590437945566314
 AudioSource:
   m_ObjectHideFlags: 0
