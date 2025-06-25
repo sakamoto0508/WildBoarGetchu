@@ -26,7 +26,12 @@ public class Getchu : MonoBehaviour
 
             // 状態を即座にGetchuedに変更
             enemyBase.enemyState = EnemyBase.EnemyState.Getchued;
-
+            // チュートリアル用：敵が捕まったことをAttackTaskに通知（チュートリアルが存在する場合のみ）
+            var tutorialManager = FindObjectOfType<TutorialManager>();
+            if (tutorialManager != null)
+            {
+                AttackTask.OnEnemyCaught();
+            }
             // SE再生
             _getchuSE.PlayOneShot(_getchuSE.clip);
 
