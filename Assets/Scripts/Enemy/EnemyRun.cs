@@ -1,4 +1,3 @@
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -333,6 +332,18 @@ public class EnemyRun : EnemyBase
 
     void ChaseCage()
     {
+        if (_myAgent == null || !_myAgent.enabled)
+        {
+            
+            return;
+        }
+
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+        {
+            
+            return;
+        }
+
         enemyState = EnemyState.ChaseCage;
         _myAgent.SetDestination(_targetCage.position);
     }

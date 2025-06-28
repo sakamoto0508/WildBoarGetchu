@@ -37,13 +37,12 @@ public class Getchu : MonoBehaviour
 
             // NavMeshAgent処理
             NavMeshAgent agent = other.GetComponent<NavMeshAgent>();
-            if (agent != null)
-            {
+            
                 agent.ResetPath(); // 現在のパスをクリア
                 agent.velocity = Vector3.zero; // 速度をリセット
                 agent.isStopped = true; // 移動を停止
                 // 一時的に無効化はGetchuManagerで行う
-            }
+            
 
             // Getchu演出呼び出し
             var getchuManager = FindObjectOfType<GetchuManager>();

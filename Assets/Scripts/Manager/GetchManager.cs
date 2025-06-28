@@ -41,10 +41,8 @@ public class GetchuManager : MonoBehaviour
             }
         }
         // NavMeshAgent‚ğŠ®‘S‚É’â~
-        if (agent != null)
-        {
-            agent.enabled = false;
-        }
+        agent.enabled = false;
+        
 
         // Getchu—pƒJƒƒ‰‚É“G‚ğİ’è
         _getchuCamera.LookAt = enemyTransform;

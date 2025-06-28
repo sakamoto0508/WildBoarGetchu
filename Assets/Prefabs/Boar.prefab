@@ -123,9 +123,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: 0
-  _runSpeed: 10
-  _chaseSpeed: 10
-  _wanderSpeed: 5
+  _runSpeed: 5
+  _chaseSpeed: 5
+  _wanderSpeed: 3
   _targetPlayer: {fileID: 6860358051790473019, guid: 4abdaa43478f2f940af5535a57745868, type: 3}
   _targetCage: {fileID: 5378169154081051277, guid: b3e95c835eb76ae47a85ebe194c7a9aa, type: 3}
   _animator: {fileID: 6627618806390609015}

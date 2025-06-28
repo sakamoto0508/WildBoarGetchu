@@ -1,17 +1,19 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementTask : ITutorialTask
+public class JumpTask : ITutorialTask
 {
     public string GetTitle()
     {
-        return "基本操作 移動";
+        return "基本操作 ジャンプ";
     }
 
     public string GetText()
     {
-        return "WSADキーで上下左右に移動できる"
-            + Environment.NewLine + "プレイヤーを動かしてみよう！！";
+        return "Spaceでジャンプができる"
+            + Environment.NewLine + "ジャンプしてみよう！！";
     }
 
     public void OnTaskSetting()
@@ -21,10 +23,8 @@ public class MovementTask : ITutorialTask
 
     public bool CheckTask()
     {
-        float axis_h = Input.GetAxis("Horizontal");
-        float axis_v = Input.GetAxis("Vertical");
-
-        if (0 < axis_v || 0 < axis_h)
+        // スペースキーが押されたかをチェック
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             return true;
         }

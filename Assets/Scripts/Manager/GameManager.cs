@@ -22,16 +22,19 @@ public class GameManager : MonoBehaviour
     private bool _hasCleared = false;
     private void OnEnable()
     {
+        //シーンの読み込み時のコールバックを登録・解除
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     private void OnDisable()
     {
+        //新しくシーンがロードされたときに実行される。
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != _titleSceneName)
         {
+            //EnemyBaseを取得
             _enemies = FindObjectsOfType<EnemyBase>().ToList();
             _hasCleared = false;
 

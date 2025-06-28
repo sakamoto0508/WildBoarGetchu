@@ -39,6 +39,7 @@ public class TutorialManager : MonoBehaviour
         tutorialTask = new List<ITutorialTask>()
         {
             new MovementTask(),
+            new JumpTask(),
             new AttackTask(),
         };
 

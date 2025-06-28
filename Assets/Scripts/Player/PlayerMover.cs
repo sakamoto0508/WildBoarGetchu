@@ -138,6 +138,7 @@ public class PlayerMover : MonoBehaviour, IPlayerMover
             Quaternion targetRot = Quaternion.LookRotation(_moveDirection);
 
             // Rigidbody ‚Ì MoveRotation ‚Å‰ñ“]FixedDeltaTime ‚ğg‚Á‚ÄŠŠ‚ç‚©‚É•âŠÔ
+            //Quaternion.Slerp(from,to,t)‹…–ÊüŒ`•âŠ®
             Quaternion newRot = Quaternion.Slerp(
                 _rb.rotation,//Œ»İ‚Ì‰ñ“]
                 targetRot,//–Ú•W‰ñ“]
